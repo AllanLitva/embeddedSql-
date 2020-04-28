@@ -1,0 +1,691 @@
+/* This is a sample dynamic Embedded SQL program. In order to run it,
+   You need to do the following. 
+
+1. Edit this file with correct oracle username and password 
+2. proc q2_test.pc
+3. cc -c q2_test.c -I/usr/include/oracle/11.2/client64
+4. cc -o q2_test q2_test.o -L/usr/lib/oracle/11.2/client64/lib -lclntsh
+5. ./q2
+*/
+
+#include <stdio.h>
+exec sql include sqlca;
+exec sql begin declare section;
+  char sqlstmt[1024];
+  
+/* supplier buffers */
+  
+  char sno[5];
+  char sname[10];
+  int  status;
+  char city[20];
+  
+/* part buffers */
+
+  char pno[5];
+  char pname[20];
+  char color[20];
+  float weight;
+  char city[20];
+
+/* SP buffers  */     
+     
+  char snum[5];
+  char pnum[5];
+  int  qty; 
+  
+     
+     
+  
+ char *username= "fedora";
+ char *password= "oracle";
+exec sql end declare section;
+
+int main() {
+  exec sql declare a_cursor cursor for
+           select *
+           from   supplier;
+
+  exec sql connect :username identified by :password;
+  if (sqlca.sqlcode == 0)
+      printf("Oracle connected\n");    
+  else
+      printf("Oracle not connected\n");
+      
+      
+      
+      
+       
+
+/*  create table supplier 	*/
+  strcpy(sqlstmt, "create table supplier (s# char(4),sname varchar2(10),status  int,city varchar2(20),primary key (s#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table supplier created \n");    
+  else
+      printf("Table supplier not created\n");
+     
+ 
+ 
+ 
+/* create table part  */
+  strcpy(sqlstmt, "create table part (p# char(4),pname varchar2(10),color varchar2(10),weight  float, city varchar2(20),primary key (p#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table part created \n");    
+  else
+      printf("Table part not created\n");    
+     
+     
+     
+     
+     
+/* create table SP  */
+  strcpy(sqlstmt, "create table SP (s# char(4),p# char(4),QTY  int,primary key (s#,p#),foreign key (s#) references supplier (s#),foreign key (p#) references part (p#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table SP created \n");    
+  else
+      printf("Table SP not created\n");    
+     
+                
+   
+
+
+
+
+
+/*  populate table supplier useing the prepare statment                            */
+
+  strcpy(sqlstmt, "insert into supplier values (:v1, :v2, :v3, :v4)");
+
+  exec sql prepare s from :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("statement prepared \n");    
+  else
+      printf("statement not prepared \n");    
+      
+      
+      
+      
+      
+      
+      
+/*  insert tuple into the table  */
+
+  strcpy(sno, "S1");
+  strcpy(sname, "Smith");
+  status=20;
+  strcpy(city,"London");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :sno, :sname, :status, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+  
+
+
+/*  insert tuple into the table  */
+
+  strcpy(sno, "S2");
+  strcpy(sname, "Jones");
+  status=30;
+  strcpy(city,"Paris");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :sno, :sname, :status, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(sno, "S3");
+  strcpy(sname, "Blake");
+  status=30;
+  strcpy(city,"Paris");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :sno, :sname, :status, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(sno, "S4");
+  strcpy(sname, "Litva");
+  status=20;
+  strcpy(city,"London");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :sno, :sname, :status, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+      
+      
+      
+      
+      
+      
+/*  insert tuple into the table  */
+
+  strcpy(sno, "S5");
+  strcpy(sname, "Adams");
+  status=30;
+  strcpy(city,"Athens");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :sno, :sname, :status, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+      
+      
+      
+      
+    
+    
+    
+    
+
+/*  populate table part use the prepare statment  */
+
+  strcpy(sqlstmt, "insert into part values (:v1, :v2, :v3, :v4, :v5)");
+
+  exec sql prepare s from :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("statement prepared \n");    
+  else
+      printf("statement not prepared \n");    
+      
+
+
+
+/*  insert tuple into the table */
+
+  strcpy(pno, "P1");
+  strcpy(pname, "Nut");
+  strcpy(color, "Red");
+  weight=12.0;
+  strcpy(city,"London");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(pno, "P2");
+  strcpy(pname, "Bolt");
+  strcpy(color, "Green");
+  weight=17.0;
+  strcpy(city,"Paris");   
+
+/*  using execute statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(pno, "P3");
+  strcpy(pname, "Screw");
+  strcpy(color, "Blue");
+  weight=17.0;
+  strcpy(city,"Oslo");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(pno, "P4");
+  strcpy(pname, "Screw");
+  strcpy(color, "Red");
+  weight=14.0;
+  strcpy(city,"London");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(pno, "P5");
+  strcpy(pname, "Cam");
+  strcpy(color, "Blue");
+  weight=12.0;
+  strcpy(city,"Paris");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(pno, "P6");
+  strcpy(pname, "Cog");
+  strcpy(color, "Red");
+  weight=19.0;
+  strcpy(city,"London");   
+
+/*  using execute using statement                               */
+  exec sql execute s using :pno, :pname, :color, :weight, :city;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+
+/*  populate table SP 	*/
+/*  use the prepare statment                            */
+
+  strcpy(sqlstmt, "insert into SP values (:v1, :v2, :v3)");
+
+  exec sql prepare s from :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("statement prepared \n");    
+  else
+      printf("statement not prepared \n");    
+      
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P1");
+  qty=300;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P2");
+  qty=200;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P3");
+  qty=400;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P4");
+  qty=200;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P5");
+  qty=100;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S1");
+  strcpy(pnum, "P6");
+  qty=100;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S2");
+  strcpy(pnum, "P1");
+  qty=300;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S2");
+  strcpy(pnum, "P2");
+  qty=400;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S2");
+  strcpy(pnum, "P3");
+  qty=500;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S3");
+  strcpy(pnum, "P2");
+  qty=200;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S3");
+  strcpy(pnum, "P3");
+  qty=200;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+
+
+/*  insert tuple into the table  */
+
+  strcpy(snum, "S3");
+  strcpy(pnum, "P4");
+  qty=300;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+
+  strcpy(snum, "S4");
+  strcpy(pnum, "P2");
+  qty=300;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+
+
+  strcpy(snum, "S4");
+  strcpy(pnum, "P3");
+  qty=400;
+  
+/*  using execute using statement                               */
+  exec sql execute s using :snum, :pnum, :qty;
+  if (sqlca.sqlcode == 0)
+      printf("insert done\n");
+  else
+      printf("insert failed\n");
+
+
+
+
+exec sql open a_cursor;
+  if (sqlca.sqlcode == 0)
+      printf("Cursor opened\n");
+  else
+      printf("Cursor error\n");
+
+
+ printf("S#    NAME    Status      City  \n");
+ printf("------------------------------\n");
+
+exec sql fetch a_cursor into :sno, :sname, :status, :city;
+  while(sqlca.sqlcode==0) {
+    printf("%4s  %10s %2d  %10s\n", sno, sname, status, city);
+    exec sql fetch a_cursor into :sno, :sname, :status, city;
+  }
+
+  printf("----- --------- ------------\n");
+  exec sql close a_cursor;
+
+
+
+    
+
+  exec sql execute immediate "drop table SP";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");      
+           
+
+
+  exec sql execute immediate "drop table supplier";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");  
+      
+      
+
+  exec sql execute immediate "drop table part";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");      
+      
+      
+   
+  exec sql commit release;
+  exit(0);
+}
